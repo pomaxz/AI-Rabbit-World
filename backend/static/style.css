@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: white;
+    overflow: hidden;
+}
+
+.hud {
+    height: 60px;
+    background: rgba(15,23,42,0.95);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.hud-left div {
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+button {
+    background: linear-gradient(135deg, #22d3ee, #6366f1);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.game-wrapper {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+canvas {
+    flex: 1;
+    background: black;
+}
+
+.ui-panel {
+    width: 320px;
+    background: rgba(15,23,42,0.95);
+    border-left: 1px solid #1e293b;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-section {
+    padding: 15px;
+    border-bottom: 1px solid #1e293b;
+    flex: 1;
+    overflow-y: auto;
+}
+
+#chat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.chat-message {
+    background: #1e293b;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.character-card {
+    background: #1e293b;
+    padding: 8px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.mood-bar {
+    height: 6px;
+    background: #334155;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.mood-fill {
+    height: 100%;
+    border-radius: 5px;
+}

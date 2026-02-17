@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐰 AI Rabbit World</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="hud">
+    <div class="hud-left">
+        <div id="timeTracker">🕒 00:00</div>
+        <div id="weatherTracker">🌤 Sunny</div>
+    </div>
+    <div class="hud-right">
+        <button onclick="forceTick()">⏩ Tick</button>
+    </div>
+</div>
+
+<div class="game-wrapper">
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ui-panel">
+
+        <div class="panel-section">
+            <h3>🐰 Персонажи</h3>
+            <div id="characters"></div>
+        </div>
+
+        <div class="panel-section">
+            <h3>💬 Чат мира</h3>
+            <div id="chat"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/static/game.js"></script>
+</body>
+</html>
