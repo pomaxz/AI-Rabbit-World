@@ -1,4 +1,5 @@
 import random
+import re
 from agents import Rabbit
 
 
@@ -14,51 +15,52 @@ class World:
             "Ruby": Rabbit("Ruby", "спокойная и рассудительная"),
         }
 
-    # =====================================================
+    def add_log(self, message):
+        """Добавляет сообщение в лог"""
+        clean_message = re.sub(r'[^\x00-\x7Fа-яА-ЯёЁ\s\.,!?@-]', '', str(message))
+        self.logs.append(clean_message)
+        if len(self.logs) > 50:
+            self.logs.pop(0)
 
     def tick(self):
         """Один шаг симуляции"""
-
         self.update_time()
         self.update_weather()
 
+        # ✅ ВАЖНО: создаем список кроликов
         rabbits = list(self.agents.values())
 
-        # обновляем состояние
         for rabbit in rabbits:
             rabbit.update()
+            rabbit.move_randomly()
 
-        # случайный автономный диалог (реже, чтобы не спамило)
-        if random.random() < 0.25:
+        for rabbit in rabbits:
+            for other in rabbits:
+                if other != rabbit:
+                    reaction = rabbit.react_to_other_rabbit(other)
+                    if reaction:
+                        self.add_log(reaction)
+
+        # случайный автономный диалог
+        if random.random() < 0.25 and len(rabbits) >= 2:
             r1, r2 = random.sample(rabbits, 2)
             self.autonomous_dialogue(r1, r2)
 
         self.logs = self.logs[-20:]
 
-    # =====================================================
-
     def autonomous_dialogue(self, r1, r2):
-        """Диалог между персонажами через LLM"""
-
+        """Диалог между персонажами"""
         context = {
             "time": self.time,
             "weather": self.weather
         }
 
-        prompt = f"""
-Ты — {r1.name}.
-Ты общаешься с {r2.name}.
-Погода: {self.weather}.
-Время: {self.time}.
-Твоё настроение: {r1.mood}.
-
-Скажи одну короткую естественную реплику.
-"""
-
+        prompt = f"Поговори со мной о погоде или настроении"
         reply = r1.generate_response(prompt, context)
-        self.logs.append(reply)
+        self.add_log(reply)
 
-    # =====================================================
+        reply2 = r2.generate_response(reply, context)
+        self.add_log(reply2)
 
     def update_time(self):
         self.time += 1
@@ -69,40 +71,27 @@ class World:
         if random.random() < 0.15:
             self.weather = random.choice(["sunny", "rain", "cloudy"])
 
-    # =====================================================
-    # Пользовательский чат
-    # =====================================================
-
     def handle_user_message(self, message):
-
         message = message.strip()
-        self.logs.append(f"👤 Ты: {message}")
+        self.add_log(f"Ты: {message}")
 
         context = {
             "time": self.time,
             "weather": self.weather
         }
 
-        # Личное обращение
         if message.startswith("@"):
             parts = message.split(" ", 1)
             target_name = parts[0][1:]
             text = parts[1] if len(parts) > 1 else ""
 
             if target_name in self.agents:
-                reply = self.agents[target_name].generate_response(
-                    text,
-                    context
-                )
-                self.logs.append(reply)
-
-        # Общее сообщение
+                reply = self.agents[target_name].generate_response(text, context)
+                self.add_log(reply)
         else:
             for rabbit in self.agents.values():
                 reply = rabbit.generate_response(message, context)
-                self.logs.append(reply)
-
-    # =====================================================
+                self.add_log(reply)
 
     def get_state(self):
         return {
